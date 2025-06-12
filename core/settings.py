@@ -30,8 +30,9 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
+AUTH_USER_MODEL = 'auth_app.UserProfile'
 
 # Application definition
 
@@ -47,10 +48,12 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_filters",
     "auth_app",
-    "profiles_app"
+    "profiles_app",
+    "offers_app"
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -147,7 +150,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    env("CORS_ALLOWED_ORIGINS"),
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
