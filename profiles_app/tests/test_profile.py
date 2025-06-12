@@ -3,7 +3,6 @@ from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from auth_app.models import UserProfile
-from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from profiles_app.models import Profile
 
@@ -11,31 +10,29 @@ from profiles_app.models import Profile
 class ProfileTestSetup(APITestCase):
 
     def setUp(self):
-        # Test Users erstellen
-        self.business_user = User.objects.create_user(
+        # Test Users mit Custom User Model erstellen
+        self.business_user = UserProfile.objects.create_user(
             username="business_test",
             email="business@test.com",
             password="testpass123",
             first_name="Max",
             last_name="Muster",
+            type="business",
         )
 
-        self.customer_user = User.objects.create_user(
+        self.customer_user = UserProfile.objects.create_user(
             username="customer_test",
             email="customer@test.com",
             password="testpass123",
             first_name="Jane",
             last_name="Sonomo",
+            type="customer",
         )
 
-        # UserProfiles erstellen
-        self.business_profile = UserProfile.objects.create(
-            user=self.business_user, type="business"
-        )
-
-        self.customer_profile = UserProfile.objects.create(
-            user=self.customer_user, type="customer"
-        )
+        if not hasattr(self.business_user, "profile"):
+            Profile.objects.create(user=self.business_user)
+        if not hasattr(self.customer_user, "profile"):
+            Profile.objects.create(user=self.customer_user)
 
         # Tokens für Authentication erstellen
         self.business_token = Token.objects.create(user=self.business_user)
@@ -86,11 +83,11 @@ class profileTest(ProfileTestSetup):
             self.authenticate_user(i)
 
             if i == "business":
-                profile = self.business_profile.profile
+                profile = self.business_user.profile
             elif i == "customer":
-                profile = self.customer_profile.profile
+                profile = self.customer_user.profile
 
-            url = reverse("profile-detail", kwargs={"pk": profile.id})
+            url = reverse("profile:profile-detail", kwargs={"pk": profile.id})
             response = self.client.get(url)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -106,8 +103,8 @@ class profileTest(ProfileTestSetup):
             self.clear_authentication()
 
     def test_get_profile_unauthenticated(self):
-        profile_id = self.business_profile.profile.id
-        url = reverse("profile-detail", kwargs={"pk": profile_id})
+        profile_id = self.business_user.profile.id
+        url = reverse("profile:profile-detail", kwargs={"pk": profile_id})
 
         response = self.client.get(url)
 
@@ -115,7 +112,7 @@ class profileTest(ProfileTestSetup):
 
     def test_get_nonexistent_profile(self):
         self.authenticate_user("business")
-        url = reverse("profile-detail", kwargs={"pk": 9999})
+        url = reverse("profile:profile-detail", kwargs={"pk": 9999})
 
         response = self.client.get(url)
 
@@ -124,8 +121,8 @@ class profileTest(ProfileTestSetup):
     def test_patch_own_profile_success(self):
         self.authenticate_user("business")
 
-        profile_id = self.business_profile.profile.id
-        url = reverse("profile-detail", kwargs={"pk": profile_id})
+        profile_id = self.business_user.profile.id
+        url = reverse("profile:profile-detail", kwargs={"pk": profile_id})
 
         update_data = {
             "first_name": "Updated Max",
@@ -151,8 +148,8 @@ class profileTest(ProfileTestSetup):
     def test_patch_other_user_profile_forbidden(self):
 
         self.authenticate_user("customer")
-        profile_id = self.business_profile.profile.id
-        url = reverse("profile-detail", kwargs={"pk": profile_id})
+        profile_id = self.business_user.profile.id
+        url = reverse("profile:profile-detail", kwargs={"pk": profile_id})
         update_data = {
             "first_name": "Hacker Name",
             "location": "München",
@@ -164,8 +161,8 @@ class profileTest(ProfileTestSetup):
 
     def test_patch_profile_unauthenticated(self):
 
-        profile_id = self.business_profile.profile.id
-        url = reverse("profile-detail", kwargs={"pk": profile_id})
+        profile_id = self.business_user.profile.id
+        url = reverse("profile:profile-detail", kwargs={"pk": profile_id})
         update_data = {
             "first_name": "Hacker Name",
             "location": "München",
@@ -205,7 +202,7 @@ class ProfileListViewTests(ProfileTestSetup):
 
         for i in self.types:
             self.authenticate_user(i)
-            url = reverse(i + "-profile-list")
+            url = reverse("profiles:" + i + "-profiles-list")
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -223,7 +220,7 @@ class ProfileListViewTests(ProfileTestSetup):
 
     def test_get_profiles_list_unauthenticated(self):
         for i in self.types:
-            url = reverse(i + "-profile-list")
+            url = reverse("profiles:" + i + "-profiles-list")
 
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
