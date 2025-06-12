@@ -1,22 +1,24 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from profiles_app.models import Profile
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     """
     Serializer for profile list / patch when pk is current user
     """
-    user = serializers.IntegerField(source="user.user.id", read_only=True)
-    username = serializers.CharField(source="user.user.username", read_only=True)
+    user = serializers.IntegerField(source="user.id", read_only=True)
+    username = serializers.CharField(source="user.username", read_only=True)
     type = serializers.CharField(source="user.type", read_only=True)
     created_at = serializers.DateTimeField(
-        source="user.user.date_joined", read_only=True
+        source="user.date_joined", read_only=True
     )
 
-    first_name = serializers.CharField(source="user.user.first_name", max_length=150)
-    last_name = serializers.CharField(source="user.user.last_name", max_length=150)
-    email = serializers.EmailField(source="user.user.email")
+    first_name = serializers.CharField(source="user.first_name", max_length=150)
+    last_name = serializers.CharField(source="user.last_name", max_length=150)
+    email = serializers.EmailField(source="user.email")
 
     class Meta:
         model = Profile
@@ -37,8 +39,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ["user", "username", "type", "created_at", "file"]
 
     def update(self, instance, validated_data):
-        user_data = validated_data.pop("user", {}).get("user", {})
-        user = instance.user.user
+        user_data = validated_data.pop("user", {})
+        user = instance.user
 
         for attr, value in user_data.items():
             setattr(user, attr, value)

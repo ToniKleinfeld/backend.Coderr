@@ -45,7 +45,7 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
         """
         instance = self.get_object()
 
-        if instance.user.user != request.user:
+        if instance.user != request.user:
             return Response(
                 {"error": "Authenticated user is not the owner of the profile."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -67,9 +67,7 @@ class FilteredTypeProfileListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Profile.objects.filter(user__type=self.user_type).select_related(
-            "user__user"
-        )
+        return Profile.objects.filter(user__type=self.user_type).select_related("user")
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
