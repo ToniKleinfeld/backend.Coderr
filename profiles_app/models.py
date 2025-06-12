@@ -1,5 +1,7 @@
 from django.db import models
-from auth_app.models import UserProfile
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Profile(models.Model):
@@ -8,7 +10,10 @@ class Profile(models.Model):
     """
 
     user = models.OneToOneField(
-        UserProfile, on_delete=models.CASCADE, related_name="profile"
+        User,
+        on_delete=models.CASCADE,
+        related_name="profile",
+        primary_key=True,  # Profile ID = User ID
     )
     file = models.CharField(blank=False, default="profile_picture.jpg")
     location = models.CharField(max_length=50, blank=True, default="")
@@ -17,23 +22,27 @@ class Profile(models.Model):
     working_hours = models.CharField(max_length=50, blank=True, default="")
 
     def __str__(self):
-        return f"Profile of {self.user.user.username}"
+        return f"Profile of {self.user.username}"
+
+    @property
+    def id(self):
+        return self.user.pk
 
     @property
     def username(self):
-        return self.user.user.username
+        return self.user.username
 
     @property
     def first_name(self):
-        return self.user.user.first_name
+        return self.user.first_name
 
     @property
     def last_name(self):
-        return self.user.user.last_name
+        return self.user.last_name
 
     @property
     def email(self):
-        return self.user.user.email or ""
+        return self.user.email or ""
 
     @property
     def type(self):
@@ -41,4 +50,4 @@ class Profile(models.Model):
 
     @property
     def created_at(self):
-        return self.user.user.date_joined
+        return self.user.date_joined
