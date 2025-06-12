@@ -1,0 +1,18 @@
+{
+    "cSpell.language": "en, de-de",
+    "cSpell.words": [
+        "authtoken",
+        "celerybeat",
+        "dbnavigator",
+        "htmlcov",
+        "ipynb",
+        "mkdocs",
+        "mypy",
+        "nosetests",
+        "pycache",
+        "pyenv",
+        "pytest",
+        "sdist",
+        "venv"
+    ]
+}
