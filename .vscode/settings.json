@@ -25,6 +25,7 @@
         "sqlparse",
         "succesfull",
         "tzdata",
-        "venv"
+        "venv",
+        "viewsets"
     ]
 }
