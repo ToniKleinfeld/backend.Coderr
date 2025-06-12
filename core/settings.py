@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     "django_filters",
     "auth_app",
     "profiles_app",
-    "offers_app"
+    "offers_app",
+    "reviews_app"
 ]
 
 MIDDLEWARE = [
@@ -144,9 +145,8 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_THROTTLE_RATES": {
-        "default": "100/day",
+        "default": "1000/day",
     },
-    # Begrenzung der Api abfragen -> 'anon' == nicht eingelogt
 }
 
 CORS_ALLOWED_ORIGINS = [
