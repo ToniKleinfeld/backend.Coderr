@@ -4,7 +4,7 @@ from django.core.management.utils import get_random_secret_key
 
 env_path = Path(".env")
 
-# Wenn .env bereits existiert, abbrechen
+# When .env allready exist, abort task.
 if env_path.exists():
     print(".env allready exist. End script.")
 else:

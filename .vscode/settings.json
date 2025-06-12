@@ -1,9 +1,14 @@
 {
     "cSpell.language": "en, de-de",
     "cSpell.words": [
+        "allready",
+        "asgiref",
         "authtoken",
         "celerybeat",
+        "coderr",
         "dbnavigator",
+        "django",
+        "djangorestframework",
         "htmlcov",
         "ipynb",
         "mkdocs",
@@ -12,7 +17,11 @@
         "pycache",
         "pyenv",
         "pytest",
+        "runserver",
         "sdist",
+        "sqlparse",
+        "succesfull",
+        "tzdata",
         "venv"
     ]
 }
