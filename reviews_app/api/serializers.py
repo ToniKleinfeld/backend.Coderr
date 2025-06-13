@@ -10,7 +10,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     Serializer for Review , check if business_user == type : 'business'
     """
     business_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    reviewer = serializers.StringRelatedField(read_only=True)
+    reviewer = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Review

@@ -48,6 +48,13 @@ class ReviewTestSetup(APITestCase):
             type="customer",
         )
 
+        Review.objects.create(
+            business_user=self.first_business_user,
+            reviewer=self.second_customer_user,
+            rating=1,
+            description="War schon mal besser",
+        )
+
         # Tokens für Authentication erstellen
         self.first_business_token = Token.objects.create(user=self.first_business_user)
         self.second_business_token = Token.objects.create(
@@ -110,9 +117,68 @@ class reviewTest(ReviewTestSetup):
 
     def test_get_review_authenticated(self):
         for i in self.types:
-            self.authenticate_user( i, "1")
+            self.authenticate_user(i)
             url = reverse("review-list")
 
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.clear_authentication()
+
+    def test_get_review_unauthenticated(self):
+        url = reverse("review-list")
+        detailUrl = reverse("review-detail", kwargs={"pk": 1})
+        response = self.client.get(url)
+        detailResponse = self.client.get(detailUrl)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(detailResponse.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_nonexistent_review(self):
+        self.authenticate_user(self.types[1])
+        url = reverse("review-detail", kwargs={"pk": 5})
+        response = self.client.patch(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_post_review_business_user_forbidden(self):
+        self.authenticate_user(self.types[0])
+        url = reverse("review-list")
+
+        response = self.client.post(url, self.second_review_example_post, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+    def test_post_review_success(self):
+        self.authenticate_user(self.types[1])
+        url = reverse("review-list")
+
+        response = self.client.post(url, self.second_review_example_post, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            response.data["description"], self.second_review_example_post["description"]
+        )
+        self.assertEqual(
+            response.data["business_user"],
+            self.second_review_example_post["business_user"],
+        )
+        self.assertEqual(
+            response.data["rating"], self.second_review_example_post["rating"]
+        )
+
+    def test_post_review_same_business_user(self):
+        self.authenticate_user(self.types[1],"2")
+        url = reverse("review-list")
+
+        response = self.client.post(url, self.first_review_example_post, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_post_review_wrong_data(self):
+        self.authenticate_user(self.types[1],"1")
+        url = reverse("review-list")
+        data = self.first_review_example_post.copy()
+        data["rating"] = 7
+        
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
