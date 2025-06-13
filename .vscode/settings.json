@@ -1,18 +1,31 @@
 {
     "cSpell.language": "en, de-de",
     "cSpell.words": [
+        "allready",
+        "asgiref",
         "authtoken",
         "celerybeat",
+        "coderr",
+        "corsheaders",
         "dbnavigator",
+        "django",
+        "djangorestframework",
         "htmlcov",
         "ipynb",
         "mkdocs",
         "mypy",
         "nosetests",
+        "offerdetails",
         "pycache",
         "pyenv",
         "pytest",
+        "Regestration",
+        "runserver",
         "sdist",
-        "venv"
+        "sqlparse",
+        "succesfull",
+        "tzdata",
+        "venv",
+        "viewsets"
     ]
 }

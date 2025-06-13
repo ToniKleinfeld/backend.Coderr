@@ -4,7 +4,7 @@
   <img alt="Version" src="https://img.shields.io/badge/Framework-Django-lightgreen?logo=django" />
 </p>
 
-> Own Django / DRF based backend for the coderr frondend , to train build a API for existing Frondend.
+> Own Django / DRF based backend for the coderr frontend , to train build a API for existing Frontend.
 
 ## Dependencies
 
@@ -32,7 +32,7 @@ cp .env.example .env
 ```
 
 > [!NOTE]
-> Or create your env file with a random generatet key and default settings
+> Or create your env file with a random generated key and default settings
 
 ```sh
 python setup_env.py
