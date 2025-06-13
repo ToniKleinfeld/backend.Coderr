@@ -7,6 +7,7 @@ from reviews_app.api.permissions import ReviewPermission
 from reviews_app.api.serializers import ReviewSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.exceptions import ValidationError
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
