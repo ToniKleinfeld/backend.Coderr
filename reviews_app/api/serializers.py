@@ -19,10 +19,10 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate_business_user(self, value):
         """
-        Validiert, dass der business_user den Typ 'business' hat
+        Validates that the business_user has the type 'business'
         """
         if not hasattr(value, 'type') or value.type != 'business':
             raise serializers.ValidationError(
-                "Der ausgewählte User muss vom Typ 'business' sein."
+                "The selected user must be of type “business”."
             )
         return value
