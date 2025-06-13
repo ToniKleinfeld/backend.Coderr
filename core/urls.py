@@ -17,12 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from reviews_app.api.views import ReviewViewSet
 
-
-router = DefaultRouter()
-router.register(r"reviews", ReviewViewSet, basename="review")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -31,5 +26,5 @@ urlpatterns = [
     path("api/profiles/", include("profiles_app.api.profiles_urls")),
     path("api/offers/", include("offers_app.api.urls")),
     path("api/offerdetails/", include("offers_app.api.offerdetails_urls")),
-    path("api/reviews/", include(router.urls)),
+    path("api/reviews/", include("reviews_app.api.urls")),
 ]
