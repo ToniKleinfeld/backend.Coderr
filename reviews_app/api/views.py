@@ -34,6 +34,15 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
 
+        business_user_id = data.get("business_user")
+        if business_user_id:
+            existing_review = Review.objects.filter(
+                business_user_id=business_user_id, reviewer=request.user
+            ).first()
+
+            if existing_review:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+
         serializer = self.get_serializer(data=data)
         try:
             serializer.is_valid(raise_exception=True)
