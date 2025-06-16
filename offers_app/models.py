@@ -45,12 +45,13 @@ class OfferDetail(models.Model):
     )
     offer_type = models.CharField(max_length=20, choices=OFFER_TYPE_CHOICES)
     features = models.JSONField(default=list, blank=True)
+
     class Meta:
         ordering = ["price"]
         unique_together = [
             "offer",
             "offer_type",
-        ] 
+        ]
 
     def __str__(self):
         return f"{self.offer.title} - {self.get_offer_type_display()}"
