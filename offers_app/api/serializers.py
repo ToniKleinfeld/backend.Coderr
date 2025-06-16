@@ -52,8 +52,10 @@ class OfferListSerializer(serializers.ModelSerializer):
 
     user_details = UserDetailsSerializer(source="user", read_only=True)
     details = OfferDetailLinkSerializer(many=True, read_only=True)
-    min_price = serializers.ReadOnlyField()
-    min_delivery_time = serializers.ReadOnlyField()
+    min_price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, read_only=True
+    )
+    min_delivery_time = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Offer
@@ -66,8 +68,6 @@ class OfferListSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "details",
-            "min_price",
-            "min_delivery_time",
             "user_details",
         ]
 

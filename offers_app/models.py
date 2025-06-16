@@ -16,16 +16,6 @@ class Offer(models.Model):
     def __str__(self):
         return self.title
 
-    @property
-    def min_price(self):
-        return self.details.aggregate(models.Min("price"))["price__min"]
-
-    @property
-    def min_delivery_time(self):
-        return self.details.aggregate(models.Min("delivery_time_in_days"))[
-            "delivery_time_in_days__min"
-        ]
-
 
 class OfferDetail(models.Model):
     OFFER_TYPE_CHOICES = [

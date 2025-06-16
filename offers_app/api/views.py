@@ -2,6 +2,7 @@ from rest_framework import viewsets, status, permissions, mixins
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
 from rest_framework import filters
 from offers_app.models import Offer, OfferDetail
+from django.db.models import Min
 from offers_app.api.serializers import (
     OfferListSerializer,
     OfferCreateSerializer,
@@ -19,6 +20,7 @@ class CustomPagination(PageNumberPagination):
 class OfferFilter(FilterSet):
     creator_id = NumberFilter(field_name="user", lookup_expr="exact")
     max_delivery_time = NumberFilter(field_name="min_delivery_time", lookup_expr="lte")
+    min_price = NumberFilter(field_name="min_price", lookup_expr="gte")
 
     class Meta:
         model = Offer
@@ -47,6 +49,12 @@ class OfferViewSet(viewsets.ModelViewSet):
     filterset_class = OfferFilter
     search_fields = ["title", "description"]
     ordering_fields = ["updated_at", "min_price"]
+
+    def get_queryset(self):
+        return Offer.objects.annotate(
+            min_price=Min("details__price"),
+            min_delivery_time=Min("details__delivery_time_in_days"),
+        )
 
     def get_serializer_class(self):
         return self.serializer_action_classes.get(
