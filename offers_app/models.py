@@ -43,8 +43,8 @@ class OfferDetail(models.Model):
     price = models.DecimalField(
         max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
     )
-    offer_type = models.CharField(max_choices=20, choices=OFFER_TYPE_CHOICES)
-
+    offer_type = models.CharField(max_length=20, choices=OFFER_TYPE_CHOICES)
+    features = models.JSONField(default=list, blank=True)
     class Meta:
         ordering = ["price"]
         unique_together = [
@@ -54,16 +54,3 @@ class OfferDetail(models.Model):
 
     def __str__(self):
         return f"{self.offer.title} - {self.get_offer_type_display()}"
-
-
-class Feature(models.Model):
-    offer_detail = models.ForeignKey(
-        OfferDetail, on_delete=models.CASCADE, related_name="features"
-    )
-    name = models.CharField(max_length=50)
-
-    class Meta:
-        ordering = ["id"]
-
-    def __str__(self):
-        return self.name
