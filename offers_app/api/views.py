@@ -1,8 +1,13 @@
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status, permissions, mixins
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
 from rest_framework import filters
 from offers_app.models import Offer, OfferDetail
-from offers_app.api.serializers import OfferListSerializer
+from offers_app.api.serializers import (
+    OfferListSerializer,
+    OfferCreateSerializer,
+    OfferUpdateSerializer,
+    OfferDetailSerializer,
+)
 from rest_framework.pagination import PageNumberPagination
 
 
@@ -20,10 +25,17 @@ class OfferFilter(FilterSet):
         fields = ["min_price", "max_delivery_time", "creator_id"]
 
 
-class OfferViewSet(viewsets.ReadOnlyModelViewSet):
+class OfferViewSet(viewsets.ModelViewSet):
 
     queryset = Offer.objects.all()
-    serializer_class = OfferListSerializer
+    serializer_action_classes = {
+        "list": OfferListSerializer,
+        "retrieve": OfferListSerializer,
+        "create": OfferCreateSerializer,
+        "partial_update": OfferUpdateSerializer,
+        "destroy": OfferListSerializer,
+    }
+
     pagination_class = CustomPagination
 
     filter_backends = [
@@ -32,6 +44,20 @@ class OfferViewSet(viewsets.ReadOnlyModelViewSet):
         filters.OrderingFilter,
     ]
 
-    filterset_class = OfferFilter 
+    filterset_class = OfferFilter
     search_fields = ["title", "description"]
     ordering_fields = ["updated_at", "min_price"]
+
+    def get_serializer_class(self):
+        return self.serializer_action_classes.get(
+            self.action,
+            super().get_serializer_class(),
+        )
+
+
+class OfferDetailsView(
+    mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
+):
+    queryset = OfferDetail.objects.all()
+    serializer_class = OfferDetailSerializer
+    http_method_names = ["get", "patch"]
