@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status, permissions, mixins
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
+from rest_framework.response import Response
 from rest_framework import filters
 from offers_app.models import Offer, OfferDetail
 from django.db.models import Min
@@ -59,10 +60,7 @@ class OfferViewSet(viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
-        return self.serializer_action_classes.get(
-            self.action,
-            self.serializer_class
-        )
+        return self.serializer_action_classes.get(self.action, self.serializer_class)
 
 
 class OfferDetailsView(
@@ -72,6 +70,5 @@ class OfferDetailsView(
     serializer_class = OfferDetailSerializer
     http_method_names = ["get", "patch"]
 
-
-
-#TODO: patch / post Delte funktionen , testen mit Postman!
+    def list(self, request):
+        return Response(status=404)
