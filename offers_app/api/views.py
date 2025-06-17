@@ -11,6 +11,7 @@ from offers_app.api.serializers import (
     OfferDetailSerializer,
 )
 from rest_framework.pagination import PageNumberPagination
+from offers_app.api.permissions import OffersPermission
 
 
 class CustomPagination(PageNumberPagination):
@@ -32,6 +33,7 @@ class OfferViewSet(viewsets.ModelViewSet):
 
     queryset = Offer.objects.all()
     serializer_class = OfferListSerializer
+    permission_classes = [OffersPermission]
 
     serializer_action_classes = {
         "list": OfferListSerializer,
@@ -61,6 +63,25 @@ class OfferViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         return self.serializer_action_classes.get(self.action, self.serializer_class)
+
+    def create(self, request, *args, **kwargs):
+        details = request.data.get("details", [])
+
+        if len(details) != 3:
+            return Response(
+                {"error": "Genau 3 Details sind erforderlich"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        required_types = {"basic", "standard", "premium"}
+        provided_types = {detail.get("typ", "").lower() for detail in details}
+
+        if provided_types != required_types:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return super().create(request, *args, **kwargs)
 
 
 class OfferDetailsView(
