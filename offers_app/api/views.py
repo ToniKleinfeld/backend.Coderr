@@ -30,6 +30,8 @@ class OfferFilter(FilterSet):
 class OfferViewSet(viewsets.ModelViewSet):
 
     queryset = Offer.objects.all()
+    serializer_class = OfferListSerializer
+
     serializer_action_classes = {
         "list": OfferListSerializer,
         "retrieve": OfferListSerializer,
@@ -59,7 +61,7 @@ class OfferViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return self.serializer_action_classes.get(
             self.action,
-            super().get_serializer_class(),
+            self.serializer_class
         )
 
 
@@ -69,3 +71,7 @@ class OfferDetailsView(
     queryset = OfferDetail.objects.all()
     serializer_class = OfferDetailSerializer
     http_method_names = ["get", "patch"]
+
+
+
+#TODO: patch / post Delte funktionen , testen mit Postman!
