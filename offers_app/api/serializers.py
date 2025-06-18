@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from offers_app.models import Offer, OfferDetail
 from rest_framework.response import Response
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class OfferDetailSerializer(serializers.ModelSerializer):
@@ -44,7 +46,7 @@ class OfferDetailLinkSerializer(serializers.HyperlinkedModelSerializer):
         model = OfferDetail
         fields = ["id", "url"]
         extra_kwargs = {
-            "url": {"view_name": "offerdetail-detail", "lookup_field": "pk"}
+            "url": {"view_name": "offerdetails:offerdetails-detail", "lookup_field": "pk"}
         }
 
 
@@ -69,7 +71,11 @@ class OfferListSerializer(serializers.ModelSerializer):
             "updated_at",
             "details",
             "user_details",
+            "min_delivery_time",
+            "min_price"
         ]
+
+    
 
 
 class OfferCreateSerializer(serializers.ModelSerializer):

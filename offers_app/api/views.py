@@ -56,9 +56,13 @@ class OfferViewSet(viewsets.ModelViewSet):
     ordering_fields = ["updated_at", "min_price"]
 
     def get_queryset(self):
-        return Offer.objects.annotate(
-            min_price=Min("details__price"),
-            min_delivery_time=Min("details__delivery_time_in_days"),
+        return (
+            Offer.objects.select_related()
+            .prefetch_related("details")
+            .annotate(
+                min_price=Min("details__price"),
+                min_delivery_time=Min("details__delivery_time_in_days"),
+            )
         )
 
     def get_serializer_class(self):
@@ -74,14 +78,14 @@ class OfferViewSet(viewsets.ModelViewSet):
             )
 
         required_types = {"basic", "standard", "premium"}
-        provided_types = {detail.get("typ", "").lower() for detail in details}
+        provided_types = {detail.get("offer_type", "").lower() for detail in details}
 
         if provided_types != required_types:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        return super().create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)       
 
 
 class OfferDetailsView(
