@@ -42,12 +42,27 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
 
 class OfferDetailLinkSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.SerializerMethodField()
+
     class Meta:
         model = OfferDetail
         fields = ["id", "url"]
-        extra_kwargs = {
-            "url": {"view_name": "offerdetails:offerdetails-detail", "lookup_field": "pk"}
-        }
+
+    def get_url(self, obj):
+        request = self.context.get("request")
+        if request and hasattr(request, "resolver_match"):
+            if (
+                "list" in request.resolver_match.url_name
+                or request.method == "GET"
+                and not request.resolver_match.kwargs
+            ):
+                return f"/offerdetails/{obj.pk}/"
+
+        from django.urls import reverse
+
+        return request.build_absolute_uri(
+            reverse("offerdetails:offerdetails-detail", kwargs={"pk": obj.pk})
+        )
 
 
 class OfferListSerializer(serializers.ModelSerializer):
@@ -72,10 +87,8 @@ class OfferListSerializer(serializers.ModelSerializer):
             "details",
             "user_details",
             "min_delivery_time",
-            "min_price"
+            "min_price",
         ]
-
-    
 
 
 class OfferCreateSerializer(serializers.ModelSerializer):
