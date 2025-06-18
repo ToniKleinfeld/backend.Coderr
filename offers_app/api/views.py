@@ -15,12 +15,20 @@ from offers_app.api.permissions import OffersPermission
 
 
 class CustomPagination(PageNumberPagination):
+    """
+    Custom pagination for Offer endpoints, sets default and max page size.
+    """
+
     page_size = 5
     page_size_query_param = "page_size"
     max_page_size = 100
 
 
 class OfferFilter(FilterSet):
+    """
+    FilterSet for filtering offers by creator, delivery time, and price.
+    """
+
     creator_id = NumberFilter(field_name="user", lookup_expr="exact")
     max_delivery_time = NumberFilter(field_name="min_delivery_time", lookup_expr="lte")
     min_price = NumberFilter(field_name="min_price", lookup_expr="gte")
@@ -31,6 +39,10 @@ class OfferFilter(FilterSet):
 
 
 class OfferViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing Offer objects: list, create, update, delete.
+    Handles filtering, searching, ordering, and custom validation for offer details.
+    """
 
     queryset = Offer.objects.all()
     serializer_class = OfferListSerializer
@@ -114,6 +126,11 @@ class OfferViewSet(viewsets.ModelViewSet):
 class OfferDetailsView(
     mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
+    """
+    ViewSet for retrieving and updating individual OfferDetail objects.
+    Only allows GET and PATCH methods.
+    """
+
     queryset = OfferDetail.objects.all()
     serializer_class = OfferDetailSerializer
     http_method_names = ["get", "patch"]

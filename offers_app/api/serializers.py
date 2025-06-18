@@ -7,6 +7,10 @@ User = get_user_model()
 
 
 class OfferDetailSerializer(serializers.ModelSerializer):
+    """
+    Serializer for OfferDetail model, handles serialization and validation for offer details.
+    """
+
     price = serializers.DecimalField(
         max_digits=10, 
         decimal_places=2, 
@@ -42,12 +46,20 @@ class OfferDetailSerializer(serializers.ModelSerializer):
 
 
 class UserDetailsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for user details, used for nested representation in offers.
+    """
+
     class Meta:
         model = User
         fields = ["first_name", "last_name", "username"]
 
 
 class OfferDetailLinkSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Serializer for linking to OfferDetail instances via URLs.
+    """
+
     url = serializers.SerializerMethodField()
 
     class Meta:
@@ -72,6 +84,9 @@ class OfferDetailLinkSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class OfferListSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing offers with related details and user info.
+    """
 
     user_details = UserDetailsSerializer(source="user", read_only=True)
     details = OfferDetailLinkSerializer(many=True, read_only=True)
@@ -96,6 +111,10 @@ class OfferListSerializer(serializers.ModelSerializer):
 
 
 class OfferCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating offers along with their details.
+    """
+
     details = OfferDetailSerializer(many=True)
 
     class Meta:
@@ -121,6 +140,10 @@ class OfferCreateSerializer(serializers.ModelSerializer):
 
 
 class OfferUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating offers and their details.
+    """
+
     details = OfferDetailSerializer(many=True, required=False)
 
     class Meta:

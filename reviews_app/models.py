@@ -7,6 +7,9 @@ User = get_user_model()
 
 # Create your models here.
 class Review(models.Model):
+    """
+    Model for customer reviews of business users, including rating and description.
+    """
 
     business_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="business_review"

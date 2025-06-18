@@ -7,7 +7,7 @@ User = get_user_model()
 
 class ReviewSerializer(serializers.ModelSerializer):
     """
-    Serializer for Review , check if business_user == type : 'business'
+    Serializer for Review, checks if business_user is of type 'business'.
     """
     business_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     reviewer = serializers.PrimaryKeyRelatedField(read_only=True)

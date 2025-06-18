@@ -6,6 +6,10 @@ User = get_user_model()
 
 
 class Offer(models.Model):
+    """
+    Model representing an offer created by a user.
+    """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="offers")
     title = models.CharField(max_length=100)
     image = models.ImageField(upload_to="offers/images/", null=True, blank=True)
@@ -18,6 +22,10 @@ class Offer(models.Model):
 
 
 class OfferDetail(models.Model):
+    """
+    Model representing the details of an offer, such as pricing, features, and type.
+    """
+
     OFFER_TYPE_CHOICES = [
         ("basic", "Basic"),
         ("standard", "Standard"),
