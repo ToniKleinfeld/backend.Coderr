@@ -1,9 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from offers_app.api.views import OfferViewSet
 
-# from .views import
+app_name = "offers"
 
-app_name = 'offers'
+router = DefaultRouter()
+router.register(r"", OfferViewSet, basename="offers")
 
 urlpatterns = [
-    # path('<int:pk>/', ProfileDetailView.as_view(), name='offer-detail'),
+    path("", include(router.urls)),
 ]

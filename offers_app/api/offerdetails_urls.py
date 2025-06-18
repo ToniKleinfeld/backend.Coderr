@@ -1,9 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from offers_app.api.views import OfferDetailsView
 
-# from .views import
+app_name = "offerdetails"
 
-app_name = 'offerdetails'
+router = DefaultRouter()
+router.register(r"", OfferDetailsView, basename="offerdetails")
 
 urlpatterns = [
-    # path('<int:pk>/', ProfileDetailView.as_view(), name='offerdetails-detail'),
+    path("", include(router.urls)),
 ]
