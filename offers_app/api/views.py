@@ -15,8 +15,9 @@ from offers_app.api.permissions import OffersPermission
 
 
 class CustomPagination(PageNumberPagination):
+    page_size = 5
     page_size_query_param = "page_size"
-    max_page_size = 10
+    max_page_size = 100
 
 
 class OfferFilter(FilterSet):
@@ -34,6 +35,7 @@ class OfferViewSet(viewsets.ModelViewSet):
     queryset = Offer.objects.all()
     serializer_class = OfferListSerializer
     permission_classes = [OffersPermission]
+    pagination_class = CustomPagination
 
     serializer_action_classes = {
         "list": OfferListSerializer,
@@ -42,8 +44,6 @@ class OfferViewSet(viewsets.ModelViewSet):
         "partial_update": OfferUpdateSerializer,
         "destroy": OfferListSerializer,
     }
-
-    pagination_class = CustomPagination
 
     filter_backends = [
         DjangoFilterBackend,
@@ -73,7 +73,6 @@ class OfferViewSet(viewsets.ModelViewSet):
 
         if len(details) != 3:
             return Response(
-                {"error": "Genau 3 Details sind erforderlich"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -85,7 +84,31 @@ class OfferViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        return super().create(request, *args, **kwargs)       
+        return super().create(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        details_data = request.data.pop("details", [])
+        for detail_data in details_data:
+            detail_obj = instance.details.get(offer_type=detail_data["offer_type"])
+            detail_serializer = OfferDetailSerializer(
+                detail_obj,
+                data=detail_data,
+                partial=True,
+                context={"request": request},
+            )
+            detail_serializer.is_valid(raise_exception=True)
+            detail_serializer.save()
+
+        offer_serializer = self.get_serializer(instance, data=request.data, partial=True)
+        offer_serializer.is_valid(raise_exception=True)
+        offer_serializer.save()
+
+        instance.refresh_from_db()                         
+        instance._prefetched_objects_cache = {}          
+
+        return Response(self.get_serializer(instance).data, status=status.HTTP_200_OK)
 
 
 class OfferDetailsView(
@@ -94,6 +117,7 @@ class OfferDetailsView(
     queryset = OfferDetail.objects.all()
     serializer_class = OfferDetailSerializer
     http_method_names = ["get", "patch"]
+    permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request):
         return Response(status=404)

@@ -7,9 +7,15 @@ User = get_user_model()
 
 
 class OfferDetailSerializer(serializers.ModelSerializer):
+    price = serializers.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        coerce_to_string=False
+    )
     class Meta:
         model = OfferDetail
         fields = [
+            "id",
             "title",
             "revisions",
             "delivery_time_in_days",
@@ -28,7 +34,7 @@ class OfferDetailSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return OfferDetail.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
+    def partial_update(self, instance, validated_data):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -69,9 +75,7 @@ class OfferListSerializer(serializers.ModelSerializer):
 
     user_details = UserDetailsSerializer(source="user", read_only=True)
     details = OfferDetailLinkSerializer(many=True, read_only=True)
-    min_price = serializers.DecimalField(
-        max_digits=10, decimal_places=2, read_only=True
-    )
+    min_price = serializers.FloatField(read_only=True)
     min_delivery_time = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -96,7 +100,8 @@ class OfferCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
-        fields = ["title", "image", "description", "details"]
+        fields = ["id","title", "image", "description", "details"]
+        read_only_fields = ["id"]
 
     def create(self, validated_data):
         details_data = validated_data.pop("details")
@@ -122,25 +127,3 @@ class OfferUpdateSerializer(serializers.ModelSerializer):
         model = Offer
         fields = ["title", "image", "description", "details"]
 
-    def partial_update(self, request, *args, **kwargs):
-        offer = self.get_object()
-        details_data = request.data.get("details", [])
-
-        super().partial_update(request, *args, **kwargs)
-
-        for detail_data in details_data:
-            offer_type = detail_data.get("offer_type")
-            detail_instance = OfferDetail.objects.get(
-                offer=offer, offer_type=offer_type
-            )
-
-            serializer = OfferDetailSerializer(
-                detail_instance,
-                data=detail_data,
-                partial=True,
-                context={"request": request},
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-
-        return Response(self.get_serializer(offer).data)
