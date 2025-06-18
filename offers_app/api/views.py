@@ -75,6 +75,7 @@ class OfferViewSet(viewsets.ModelViewSet):
                 min_price=Min("details__price"),
                 min_delivery_time=Min("details__delivery_time_in_days"),
             )
+            .order_by("id") # Ensure consistent ordering
         )
 
     def get_serializer_class(self):
