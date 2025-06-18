@@ -78,9 +78,9 @@ class OfferTestSetup(APITestCase):
             "title": "Updated Offer",
             "details": [
                 {
-                    "title": "Basic Package",
+                    "title": "Basic Package Patched",
                     "revisions": 3,
-                    "delivery_time_in_days": 4,
+                    "delivery_time_in_days": 7,
                     "price": 150.00,
                     "offer_type": "basic",
                     "features": ["Feature 1", "Feature 2", "Feature 3"],
@@ -285,7 +285,7 @@ class OfferCreateTestCase(OfferTestSetup):
                 {
                     "title": "Standard Package",
                     "revisions": 3,
-                    "delivery_time_in_days": 5,
+                    "delivery_time_in_days": 6,
                     "price": 200.00,
                     "offer_type": "standard",
                     "features": ["Feature 1", "Feature 2", "Feature 3"],
