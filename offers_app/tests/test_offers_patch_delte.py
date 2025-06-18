@@ -2,13 +2,10 @@ from offers_app.tests.test_offers_get_post import OfferTestSetup
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from offers_app.models import Offer, OfferDetail
-from rest_framework.test import APITestCase, APIClient
+from offers_app.models import Offer
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from rest_framework.authtoken.models import Token
-import re
-from urllib.parse import urlparse
+
 
 User = get_user_model()
 

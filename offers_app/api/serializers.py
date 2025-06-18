@@ -12,10 +12,9 @@ class OfferDetailSerializer(serializers.ModelSerializer):
     """
 
     price = serializers.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
-        coerce_to_string=False
+        max_digits=10, decimal_places=2, coerce_to_string=False
     )
+
     class Meta:
         model = OfferDetail
         fields = [
@@ -119,7 +118,7 @@ class OfferCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
-        fields = ["id","title", "image", "description", "details"]
+        fields = ["id", "title", "image", "description", "details"]
         read_only_fields = ["id"]
 
     def create(self, validated_data):
@@ -149,4 +148,3 @@ class OfferUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
         fields = ["title", "image", "description", "details"]
-
