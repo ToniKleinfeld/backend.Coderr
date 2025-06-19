@@ -15,14 +15,14 @@ class Order(models.Model):
         ("cancelled", "Cancelled"),
     ]
 
-    customer_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="orders"
+    business_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="business_user_orders"
     )
-    offer = models.ForeignKey(
-        "offers_app.Offer", on_delete=models.CASCADE, related_name="orders"
+    customer_user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="customer_user_orders"
     )
     offer_detail = models.ForeignKey(
-        "offers_app.OfferDetail", on_delete=models.CASCADE, related_name="orders"
+        "offers_app.OfferDetail", on_delete=models.CASCADE, related_name="order"
     )
     status = models.CharField(
         max_length=20, choices=status_choices, default="in_progress"
@@ -31,4 +31,6 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Order {self.id} by {self.customer_user.username} for {self.offer.title}"
+        return (
+            f"Order {self.id} by {self.customer_user.username} for {self.offer.title}"
+        )
