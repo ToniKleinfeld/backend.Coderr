@@ -5,6 +5,12 @@ from orders_app.models import Order
 from offers_app.models import OfferDetail
 from orders_app.api.permissions import OrdersPermissions
 from rest_framework.exceptions import NotFound
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class OrderViewSet(
@@ -43,3 +49,18 @@ class OrderViewSet(
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class OrderCountView(APIView):
+    """
+    View to get the count of orders for a specific user.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, business_user_id):
+        business_user = get_object_or_404(User, id=business_user_id)
+
+        order_count = Order.objects.filter(business_user=business_user).count()
+
+        return Response({"order_count": order_count}, status=status.HTTP_200_OK)
