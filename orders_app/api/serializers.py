@@ -12,12 +12,8 @@ class OrderSerializer(serializers.ModelSerializer):
     """
 
     title = serializers.CharField(source="offer_detail.title", read_only=True)
-    revisions = serializers.IntegerField(
-        source="offer_detail.revisions", read_only=True
-    )
-    delivery_time_in_days = serializers.IntegerField(
-        source="offer_detail.delivery_time_in_days", read_only=True
-    )
+    revisions = serializers.IntegerField(source="offer_detail.revisions", read_only=True)
+    delivery_time_in_days = serializers.IntegerField(source="offer_detail.delivery_time_in_days", read_only=True)
     price = serializers.DecimalField(
         source="offer_detail.price",
         max_digits=10,
@@ -52,9 +48,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     Serializer for creating new orders, handles validation and creation of orders.
     """
 
-    offer_detail_id = serializers.PrimaryKeyRelatedField(
-        queryset=OfferDetail.objects.all(), write_only=True
-    )
+    offer_detail_id = serializers.PrimaryKeyRelatedField(queryset=OfferDetail.objects.all(), write_only=True)
 
     class Meta:
         model = Order
@@ -73,10 +67,23 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         business_user = detail.offer.user
 
         order = Order.objects.create(
-            user=customer_user,
-            offer_detail=detail,
-            business_user=business_user,
-            **validated_data
+            user=customer_user, offer_detail=detail, business_user=business_user, **validated_data
         )
 
         return order
+
+
+class OrderUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating existing orders, handles validation and updates of orders.
+    """
+
+    class Meta:
+        model = Order
+        fields = ["status"]
+        read_only_fields = ["created_at", "updated_at"]
+
+    def update(self, instance, validated_data):
+        instance.status = validated_data.get("status", instance.status)
+        instance.save()
+        return instance
