@@ -10,7 +10,7 @@ class Order(models.Model):
     """
 
     status_choices = [
-        ("in_progress", "In Progress"),
+        ("in progress", "In Progress"),
         ("completed", "Completed"),
         ("cancelled", "Cancelled"),
     ]

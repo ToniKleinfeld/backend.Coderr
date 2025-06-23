@@ -43,7 +43,7 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only_fields = ["created_at", "updated_at"]
 
 
-class OrderCreateSerializer(serializers.ModelSerializer):
+class OrderCreateUpdateSerializer(serializers.ModelSerializer):
     """
     Serializer for creating new orders, handles validation and creation of orders.
     """
@@ -59,7 +59,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             "status",
             "offer_detail_id",
         ]
-        read_only_fields = ["created_at", "updated_at"]
+        read_only_fields = ["created_at", "updated_at", "business_user", "offer_detail", "customer_user"]
 
     def create(self, validated_data):
         customer_user = self.context["request"].user
@@ -67,23 +67,17 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         business_user = detail.offer.user
 
         order = Order.objects.create(
-            user=customer_user, offer_detail=detail, business_user=business_user, **validated_data
+            customer_user=customer_user, offer_detail=detail, business_user=business_user, **validated_data
         )
 
         return order
-
-
-class OrderUpdateSerializer(serializers.ModelSerializer):
-    """
-    Serializer for updating existing orders, handles validation and updates of orders.
-    """
-
-    class Meta:
-        model = Order
-        fields = ["status"]
-        read_only_fields = ["created_at", "updated_at"]
 
     def partial_update(self, instance, validated_data):
         instance.status = validated_data.get("status", instance.status)
         instance.save()
         return instance
+
+    def to_representation(self, instance):
+        if self.context.get("request") and self.context["request"].method == "POST" or "PATCH":
+            return OrderSerializer(instance, context=self.context).data
+        return super().to_representation(instance)
