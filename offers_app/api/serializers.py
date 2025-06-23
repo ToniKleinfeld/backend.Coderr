@@ -11,9 +11,7 @@ class OfferDetailSerializer(serializers.ModelSerializer):
     Serializer for OfferDetail model, handles serialization and validation for offer details.
     """
 
-    price = serializers.DecimalField(
-        max_digits=10, decimal_places=2, coerce_to_string=False
-    )
+    price = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
 
     class Meta:
         model = OfferDetail
@@ -77,9 +75,7 @@ class OfferDetailLinkSerializer(serializers.HyperlinkedModelSerializer):
 
         from django.urls import reverse
 
-        return request.build_absolute_uri(
-            reverse("offerdetails:offerdetails-detail", kwargs={"pk": obj.pk})
-        )
+        return request.build_absolute_uri(reverse("offerdetails:offerdetails-detail", kwargs={"pk": obj.pk}))
 
 
 class OfferListSerializer(serializers.ModelSerializer):

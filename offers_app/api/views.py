@@ -75,7 +75,7 @@ class OfferViewSet(viewsets.ModelViewSet):
                 min_price=Min("details__price"),
                 min_delivery_time=Min("details__delivery_time_in_days"),
             )
-            .order_by("id") # Ensure consistent ordering
+            .order_by("id")  # Ensure consistent ordering
         )
 
     def get_serializer_class(self):
@@ -118,15 +118,13 @@ class OfferViewSet(viewsets.ModelViewSet):
         offer_serializer.is_valid(raise_exception=True)
         offer_serializer.save()
 
-        instance.refresh_from_db()                         
-        instance._prefetched_objects_cache = {}          
+        instance.refresh_from_db()
+        instance._prefetched_objects_cache = {}
 
         return Response(self.get_serializer(instance).data, status=status.HTTP_200_OK)
 
 
-class OfferDetailsView(
-    mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
-):
+class OfferDetailsView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     """
     ViewSet for retrieving and updating individual OfferDetail objects.
     Only allows GET and PATCH methods.
