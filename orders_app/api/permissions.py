@@ -7,6 +7,7 @@ class OrdersPermissions(permissions.IsAuthenticated):
     - GET: authentication required
     - POST: User must be authenticated and have type 'customer'
     - PATCH: User must be the order.business_user of the order
+    - DELETE: User must be staff or admin
     """
 
     def has_permission(self, request, view):
@@ -19,6 +20,10 @@ class OrdersPermissions(permissions.IsAuthenticated):
 
         if request.method == "POST":
             if not hasattr(request.user, "type") or request.user.type != "customer":
+                return False
+
+        if request.method == "DELETE":
+            if not (request.user.is_staff or request.user.is_superuser):
                 return False
 
         return True
