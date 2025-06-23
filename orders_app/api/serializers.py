@@ -83,7 +83,7 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
         fields = ["status"]
         read_only_fields = ["created_at", "updated_at"]
 
-    def update(self, instance, validated_data):
+    def partial_update(self, instance, validated_data):
         instance.status = validated_data.get("status", instance.status)
         instance.save()
         return instance
