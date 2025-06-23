@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from orders_app.models import Order
 from offers_app.models import OfferDetail
 
+
 User = get_user_model()
 
 
@@ -78,6 +79,6 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
         return instance
 
     def to_representation(self, instance):
-        if self.context.get("request") and self.context["request"].method == "POST" or "PATCH":
+        if self.context.get("request") and self.context["request"].method in ["POST", "PATCH"]:
             return OrderSerializer(instance, context=self.context).data
         return super().to_representation(instance)
