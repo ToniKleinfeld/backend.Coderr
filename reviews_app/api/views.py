@@ -1,16 +1,33 @@
+from django.shortcuts import get_object_or_404
+
+from django_filters.rest_framework import DjangoFilterBackend
+import django_filters
+from django_filters import rest_framework as django_filters_rest
+
+from rest_framework import filters
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import ValidationError
+
 from reviews_app.models import Review
 from reviews_app.api.permissions import ReviewPermission
 from reviews_app.api.serializers import ReviewSerializer
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
-from rest_framework.exceptions import ValidationError
 
 
 # TODO: filter überprüfen buisiness_user_id, reviewer_id
+class ReviewModelFilterSet(django_filters.FilterSet):
+    """
+    Custom filter set for Review model.
+    Allows filtering by business_user_id and reviewer_id.
+    """
+
+    business_user_id = django_filters.NumberFilter(field_name="business_user__id")
+    reviewer_id = django_filters.NumberFilter(field_name="reviewer__id")
+
+    class Meta:
+        model = Review
+        fields = ["business_user_id", "reviewer_id"]
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -31,7 +48,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         filters.OrderingFilter,
     ]
 
-    filterset_fields = ["business_user__id", "reviewer__id"]
+    filterset_class = ReviewModelFilterSet
     ordering_fields = ["rating", "updated_at"]
 
     def create(self, request, *args, **kwargs):
