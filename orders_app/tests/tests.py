@@ -251,7 +251,7 @@ class OrdersDeleteTestCase(OrderTestSetup):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-class Order_countsTestCase(OrderTestSetup):
+class Order_countTestCase(OrderTestSetup):
 
     def test_order_counts(self):
         """Test if the order counts are correct."""
@@ -270,4 +270,26 @@ class Order_countsTestCase(OrderTestSetup):
         """Test if the order counts cannot be accessed with an invalid business user ID."""
         self.authenticate_user(user_type="business", custom_user_number="1")
         response = self.client.get(reverse("order-count", kwargs={"business_user_id": 999}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class Order_count_completeTestCase(OrderTestSetup):
+
+    def test_order_count_complete(self):
+        """Test if the order count for completed orders is correct."""
+        self.authenticate_user(user_type="business", custom_user_number="1")
+        response = self.client.get(reverse("completed-order-count", kwargs={"business_user_id": 1}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["completed_order_count"], 1)
+
+    def test_order_count_complete_without_authentication(self):
+        """Test if the order count for completed orders cannot be accessed without authentication."""
+        self.clear_authentication()
+        response = self.client.get(reverse("completed-order-count", kwargs={"business_user_id": 1}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_order_count_complete_with_invalid_business_user_id(self):
+        """Test if the order count for completed orders cannot be accessed with an invalid business user ID."""
+        self.authenticate_user(user_type="business", custom_user_number="1")
+        response = self.client.get(reverse("completed-order-count", kwargs={"business_user_id": 999}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
