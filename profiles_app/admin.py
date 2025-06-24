@@ -6,8 +6,8 @@ from profiles_app.models import Profile
 
 class ProfileAdminForm(forms.ModelForm):
 
-    first_name = forms.CharField(max_length=150, required=False, label="Vorname")
-    last_name = forms.CharField(max_length=150, required=False, label="Nachname")
+    first_name = forms.CharField(max_length=150, required=False, label="First Name")
+    last_name = forms.CharField(max_length=150, required=False, label="Last Name")
 
     class Meta:
         model = Profile
@@ -21,11 +21,9 @@ class ProfileAdminForm(forms.ModelForm):
             self.fields["last_name"].initial = self.instance.user.last_name
 
     def save(self, commit=True):
-        # Speichere zuerst das Profile
         profile = super().save(commit=False)
 
         if commit:
-            # Aktualisiere die User-Daten
             user = profile.user
             user.first_name = self.cleaned_data.get("first_name", "")
             user.last_name = self.cleaned_data.get("last_name", "")
