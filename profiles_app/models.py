@@ -15,7 +15,7 @@ class Profile(models.Model):
         related_name="profile",
         primary_key=True,  # Profile ID = User ID
     )
-    file = models.CharField(blank=False, default="profile_picture.jpg")
+    file = models.ImageField(upload_to="offers/images/", null=True, blank=True)
     location = models.CharField(max_length=50, blank=True, default="")
     tel = models.CharField(max_length=15, blank=True, default="")
     description = models.TextField(blank=True, default="")
