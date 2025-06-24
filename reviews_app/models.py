@@ -5,18 +5,13 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 User = get_user_model()
 
 
-# Create your models here.
 class Review(models.Model):
     """
     Model for customer reviews of business users, including rating and description.
     """
 
-    business_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="business_review"
-    )
-    reviewer = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="reviewer_review"
-    )
+    business_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="business_review")
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviewer_review")
     rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
     )
@@ -28,7 +23,7 @@ class Review(models.Model):
         verbose_name = "Review"
         verbose_name_plural = "Reviews"
 
-        unique_together = ('business_user', 'reviewer')
+        unique_together = ("business_user", "reviewer")
 
     def __str__(self):
         return f"Review from {self.reviewer.username} to {self.business_user.username} - {self.rating}/5"
