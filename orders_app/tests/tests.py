@@ -221,3 +221,31 @@ class OrdersPatchTestCase(OrderTestSetup):
             reverse("orders:orders-detail", kwargs={"pk": 999}), self.patch_data_one, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class OrdersDeleteTestCase(OrderTestSetup):
+
+    def test_order_delete(self):
+        """Test if an order can be deleted."""
+        self.authenticate_user(user_type="business", custom_user_number="1")
+        response = self.client.delete(reverse("orders:orders-detail", kwargs={"pk": 1}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Order.objects.count(), 0)
+
+    def test_order_delete_without_authentication(self):
+        """Test if an order cannot be deleted without authentication."""
+        self.clear_authentication()
+        response = self.client.delete(reverse("orders:orders-detail", kwargs={"pk": 1}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_order_delete_without_staff_status(self):
+        """Test if an order cannot be deleted by a user without staff status."""
+        self.authenticate_user(user_type="customer", custom_user_number="1")
+        response = self.client.delete(reverse("orders:orders-detail", kwargs={"pk": 1}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_order_delete_with_invalid_order_id(self):
+        """Test if an order cannot be deleted with an invalid order ID."""
+        self.authenticate_user(user_type="business", custom_user_number="1")
+        response = self.client.delete(reverse("orders:orders-detail", kwargs={"pk": 999}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
