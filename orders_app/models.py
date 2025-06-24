@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from offers_app.models import Offer
 
 User = get_user_model()
 
@@ -23,4 +24,4 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Order {self.id} by {self.customer_user.username} for {self.offer.title}"
+        return f"Order {self.id} by {self.customer_user.username}"

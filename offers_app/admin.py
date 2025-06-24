@@ -1,7 +1,6 @@
 from django.contrib import admin
-from django.db.models import Q
-from django.forms import ModelForm
 from django.contrib.auth import get_user_model
+
 from offers_app.models import Offer, OfferDetail
 
 User = get_user_model()
