@@ -23,6 +23,7 @@ class OrderTestSetup(TestCase):
             first_name="Max",
             last_name="Muster",
             type="business",
+            is_staff=True,
         )
 
         self.second_business_user = User.objects.create_user(
@@ -176,4 +177,47 @@ class OrdersCreateTestCase(OrderTestSetup):
         self.authenticate_user(user_type="customer", custom_user_number="1")
         invalid_post_data = {"offer_detail_id": 999}
         response = self.client.post(reverse("orders:orders-list"), invalid_post_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class OrdersPatchTestCase(OrderTestSetup):
+
+    def test_order_patch(self):
+        """Test if an order can be updated."""
+        self.authenticate_user(user_type="business", custom_user_number="1")
+        response = self.client.patch(
+            reverse("orders:orders-detail", kwargs={"pk": 1}), self.patch_data_two, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["status"], "in_progress")
+
+    def test_order_patch_with_wrong_data(self):
+        """Test if an order cannot be updated with wrong data."""
+        self.authenticate_user(user_type="business", custom_user_number="1")
+        wrong_patch_data = {"status": "test"}
+        response = self.client.patch(reverse("orders:orders-detail", kwargs={"pk": 1}), wrong_patch_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_order_patch_without_authentication(self):
+        """Test if an order cannot be updated without authentication."""
+        self.clear_authentication()
+        response = self.client.patch(
+            reverse("orders:orders-detail", kwargs={"pk": 1}), self.patch_data_one, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_order_patch_as_customer_user(self):
+        """Test if an order cannot be updated by a customer user."""
+        self.authenticate_user(user_type="customer", custom_user_number="1")
+        response = self.client.patch(
+            reverse("orders:orders-detail", kwargs={"pk": 1}), self.patch_data_one, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_order_patch_with_invalid_order_id(self):
+        """Test if an order cannot be updated with an invalid order ID."""
+        self.authenticate_user(user_type="business", custom_user_number="1")
+        response = self.client.patch(
+            reverse("orders:orders-detail", kwargs={"pk": 999}), self.patch_data_one, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
