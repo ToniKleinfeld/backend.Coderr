@@ -32,7 +32,7 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
-AUTH_USER_MODEL = 'auth_app.UserProfile'
+AUTH_USER_MODEL = "auth_app.UserProfile"
 
 # Application definition
 
@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     "auth_app",
     "profiles_app",
     "offers_app",
-    "reviews_app"
+    "orders_app",
+    "reviews_app",
 ]
 
 MIDDLEWARE = [

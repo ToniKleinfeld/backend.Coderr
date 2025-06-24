@@ -14,16 +14,16 @@ class OffersPermission(permissions.IsAuthenticated):
         """
         Checks if the user is generally authorized
         """
-        if view.action == 'list':
+        if view.action == "list":
             return True
 
         if not super().has_permission(request, view):
             return False
-        
-        if request.method == 'POST':
-            if not hasattr(request.user, 'type') or request.user.type != 'business':
+
+        if request.method == "POST":
+            if not hasattr(request.user, "type") or request.user.type != "business":
                 return False
-        
+
         return True
 
     def has_object_permission(self, request, view, obj):
@@ -31,7 +31,7 @@ class OffersPermission(permissions.IsAuthenticated):
         Checks if the user is authorized to access the specific review object
         """
 
-        if request.method in ['PATCH', 'DELETE']:
+        if request.method in ["PATCH", "DELETE"]:
             return obj.user == request.user
-        
+
         return True
