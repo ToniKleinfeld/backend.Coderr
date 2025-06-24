@@ -10,6 +10,9 @@ from rest_framework import filters
 from rest_framework.exceptions import ValidationError
 
 
+# TODO: filter überprüfen buisiness_user_id, reviewer_id
+
+
 class ReviewViewSet(viewsets.ModelViewSet):
     """
     POST: Create a new Review from current User
@@ -36,9 +39,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
         business_user_id = data.get("business_user")
         if business_user_id:
-            existing_review = Review.objects.filter(
-                business_user_id=business_user_id, reviewer=request.user
-            ).first()
+            existing_review = Review.objects.filter(business_user_id=business_user_id, reviewer=request.user).first()
 
             if existing_review:
                 return Response(status=status.HTTP_403_FORBIDDEN)
@@ -59,9 +60,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         allowed_fields = ["rating", "description"]
-        filtered_data = {
-            key: value for key, value in request.data.items() if key in allowed_fields
-        }
+        filtered_data = {key: value for key, value in request.data.items() if key in allowed_fields}
 
         serializer = self.get_serializer(instance, data=filtered_data, partial=partial)
 
@@ -70,7 +69,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         except ValidationError:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        review = serializer.save()
+        serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

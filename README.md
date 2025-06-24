@@ -20,6 +20,8 @@ First install all needed packages.
 python -m venv env
 
 env/Scripts/activate
+or Mac
+source env/bin/activate
 
 pip install -r requirements.txt
 ```
