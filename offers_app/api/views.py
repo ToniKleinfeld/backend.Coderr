@@ -104,6 +104,10 @@ class OfferViewSet(viewsets.ModelViewSet):
 
         details_data = request.data.pop("details", [])
         for detail_data in details_data:
+            offer_type = detail_data.get("offer_type")
+            if offer_type is None:
+                return Response({"error": "offer_type is required in details"}, status=status.HTTP_400_BAD_REQUEST)
+
             detail_obj = instance.details.get(offer_type=detail_data["offer_type"])
             detail_serializer = OfferDetailSerializer(
                 detail_obj,

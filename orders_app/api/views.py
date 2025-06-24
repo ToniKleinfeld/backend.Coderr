@@ -35,8 +35,11 @@ class OrderViewSet(
     permission_classes = [OrdersPermissions]
 
     def create(self, request, *args, **kwargs):
-        # Prüfe ob offer_detail_id existiert
+
         offer_detail_id = request.data.get("offer_detail_id")
+        if offer_detail_id is not None and not isinstance(offer_detail_id, int):
+            return Response({"error": "offer_detail_id must be a number"}, status=status.HTTP_400_BAD_REQUEST)
+
         if offer_detail_id and not OfferDetail.objects.filter(id=offer_detail_id).exists():
             raise NotFound(f"OfferDetail with ID {offer_detail_id} does not exist.")
 

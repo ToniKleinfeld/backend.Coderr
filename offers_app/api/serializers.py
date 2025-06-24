@@ -143,4 +143,4 @@ class OfferUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
-        fields = ["title", "image", "description", "details"]
+        fields = ["id", "title", "image", "description", "details"]
