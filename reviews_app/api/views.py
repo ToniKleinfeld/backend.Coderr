@@ -15,7 +15,6 @@ from reviews_app.api.permissions import ReviewPermission
 from reviews_app.api.serializers import ReviewSerializer
 
 
-# TODO: filter überprüfen buisiness_user_id, reviewer_id
 class ReviewModelFilterSet(django_filters.FilterSet):
     """
     Custom filter set for Review model.

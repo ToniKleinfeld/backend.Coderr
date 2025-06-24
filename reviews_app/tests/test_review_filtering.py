@@ -40,7 +40,7 @@ class ReviewFilterAndOrderingTestCase(ReviewTestSetup):
 
         self.authenticate_user("customer", "1")
 
-        response = self.client.get(f"/api/reviews/?business_user__id={self.first_business_user.id}")
+        response = self.client.get(f"/api/reviews/?business_user_id={self.first_business_user.id}")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
@@ -52,7 +52,7 @@ class ReviewFilterAndOrderingTestCase(ReviewTestSetup):
 
         self.authenticate_user("customer", "1")
 
-        response = self.client.get(f"/api/reviews/?reviewer__id={self.first_customer_user.id}")
+        response = self.client.get(f"/api/reviews/?reviewer_id={self.first_customer_user.id}")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
@@ -63,7 +63,7 @@ class ReviewFilterAndOrderingTestCase(ReviewTestSetup):
         self.authenticate_user("customer", "1")
 
         response = self.client.get(
-            f"/api/reviews/?business_user__id={self.first_business_user.id}&reviewer__id={self.first_customer_user.id}"
+            f"/api/reviews/?business_user_id={self.first_business_user.id}&reviewer_id={self.first_customer_user.id}"
         )
 
         self.assertEqual(response.status_code, 200)
@@ -75,7 +75,7 @@ class ReviewFilterAndOrderingTestCase(ReviewTestSetup):
     def test_filter_no_results(self):
         self.authenticate_user("customer", "1")
 
-        response = self.client.get(f"/api/reviews/?business_user__id={self.first_business_user.id}&reviewer__id=999")
+        response = self.client.get(f"/api/reviews/?business_user_id={self.first_business_user.id}&reviewer_id=999")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0)
@@ -122,7 +122,7 @@ class ReviewFilterAndOrderingTestCase(ReviewTestSetup):
     def test_combined_filter_and_ordering(self):
         self.authenticate_user("customer", "1")
 
-        response = self.client.get(f"/api/reviews/?business_user__id={self.first_business_user.id}&ordering=-rating")
+        response = self.client.get(f"/api/reviews/?business_user_id={self.first_business_user.id}&ordering=-rating")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)

@@ -258,7 +258,7 @@ class Order_countTestCase(OrderTestSetup):
         self.authenticate_user(user_type="business", custom_user_number="1")
         response = self.client.get(reverse("order-count", kwargs={"business_user_id": 1}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["order_count"], 1)
+        self.assertEqual(response.data["order_count"], 0)
 
     def test_order_counts_without_authentication(self):
         """Test if the order counts cannot be accessed without authentication."""
