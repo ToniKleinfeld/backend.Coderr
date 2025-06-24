@@ -16,18 +16,29 @@ Frontend version used : `1.2.1`
 
 First install all needed packages.
 
+on Windows:
+
 ```sh
 python -m venv env
 
 env/Scripts/activate
-or Mac
+
+pip install -r requirements.txt
+```
+
+on Mac or Linux:
+
+```sh
+python3 -m venv env
+
 source env/bin/activate
 
 pip install -r requirements.txt
 ```
 
 > [!IMPORTANT]
-> create your .env file and fill your data
+> create your .env file and fill your data <br>
+> If python not work try python3
 
 ```sh
 cp .env.example .env
@@ -46,7 +57,7 @@ How to start local server:
 
 ```sh
 env/Scripts/activate
-
+python manage.py migrate
 python manage.py runserver
 ```
 
