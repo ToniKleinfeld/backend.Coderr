@@ -10,10 +10,9 @@ if env_path.exists():
 else:
     secret_key = get_random_secret_key()
 
-    env_content = f"""# Generiert mit setup_env.py
-SECRET_KEY={secret_key}
-DEBUG=True #set on False when go to production
-CORS_ALLOWED_ORIGINS=http://localhost:5500   #change if needed
+    env_content = f"""
+SECRET_KEY="{secret_key}"
+DEBUG=True
 """
 
     # Datei schreiben

@@ -51,12 +51,15 @@ cp .env.example .env
 python setup_env.py
 ```
 
+Maybe you need to restart your coding programm.
+
 ## How to use
 
 How to start local server:
 
 ```sh
 env/Scripts/activate
+python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
