@@ -11,7 +11,7 @@ else:
     secret_key = get_random_secret_key()
 
     env_content = f"""
-SECRET_KEY="{secret_key}"
+SECRET_KEY='{secret_key}'
 DEBUG=True
 """
 
