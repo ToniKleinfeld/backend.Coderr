@@ -5,6 +5,11 @@ setup_env.py
 TODO.md
 README.md
 .gitignore
+.git
+__pycache__
+*.pyc
+.env
+node_modules
 .vscode
 black.ini
 flake8.ini
