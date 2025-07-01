@@ -33,7 +33,7 @@ if DEBUG:
 else:
     SECRET_KEY = env("SECRET_KEY")
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "35.242.194.179"]
 
 AUTH_USER_MODEL = "auth_app.UserProfile"
 
