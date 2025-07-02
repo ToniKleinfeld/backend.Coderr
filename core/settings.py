@@ -33,7 +33,7 @@ if DEBUG:
 else:
     SECRET_KEY = env("SECRET_KEY")
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "http://django.toni-kleinfeld.org/"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "django.toni-kleinfeld.org"]
 
 AUTH_USER_MODEL = "auth_app.UserProfile"
 
