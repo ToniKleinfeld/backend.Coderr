@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 from orders_app.api.views import OrderCountView, CompletedOrderCountView
 from info_app.views import base_infoView
-
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -37,4 +37,4 @@ urlpatterns = [
     ),
     path("api/reviews/", include("reviews_app.api.urls")),
     path("api/base-info/", base_infoView.as_view(), name="base-info-view"),
-]
+] + staticfiles_urlpatterns()
