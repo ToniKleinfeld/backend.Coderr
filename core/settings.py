@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_filters",
     "auth_app",
-    "profiles_app",
+    "profiles_app.apps.ProfilesAppConfig",
     "offers_app",
     "orders_app",
     "reviews_app",
