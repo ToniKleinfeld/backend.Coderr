@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib import admin
-from django.contrib import admin
 from profiles_app.models import Profile
 
 

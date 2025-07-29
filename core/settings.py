@@ -18,7 +18,10 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(DEBUG=(bool, False))
-environ.Env.read_env()
+environ.Env.read_env(BASE_DIR / ".env")
+
+if env.bool("RELOAD_ENV", default=True):
+    environ.Env.read_env(BASE_DIR / ".env", override=True)
 
 
 # Quick-start development settings - unsuitable for production
@@ -151,9 +154,6 @@ REST_FRAMEWORK = {
     },
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-]
+CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:5500", "http://localhost:5500", "https://django.toni-kleinfeld.org/coderr/"]
 
 CORS_ALLOW_CREDENTIALS = True
