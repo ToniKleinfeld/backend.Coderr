@@ -18,10 +18,13 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(DEBUG=(bool, False))
-environ.Env.read_env(BASE_DIR / ".env")
+local_env_path = BASE_DIR / ".env"
 
-if env.bool("RELOAD_ENV", default=True):
-    environ.Env.read_env(BASE_DIR / ".env", override=True)
+if local_env_path.exists():
+    env.read_env(local_env_path)
+
+if env.bool("RELOAD_ENV", default=True) and local_env_path.exists():
+    environ.Env.read_env(local_env_path, override=True)
 
 
 # Quick-start development settings - unsuitable for production
