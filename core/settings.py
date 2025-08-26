@@ -39,8 +39,8 @@ if DEBUG:
 else:
     SECRET_KEY = env("SECRET_KEY")
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "django.toni-kleinfeld.org"]
-
+ALLOWED_HOSTS = env.list("CODERR_HOST", default=["127.0.0.1", "localhost"])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default="http://localhost:4200")
 AUTH_USER_MODEL = "auth_app.UserProfile"
 
 # Application definition
@@ -98,12 +98,24 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if env.bool("DEBUG", default=True):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("CODERR_DB", default="coderr_db"),
+            "USER": env("CODERR_DB_USER", default="coderr_user"),
+            "PASSWORD": env("CODERR_DB_PASSWORD", default="supersecretpassword"),
+            "HOST": env("DB_HOST", default="db"),
+            "PORT": env("DB_PORT", default=5432),
+        }
+    }
 
 
 # Password validation
@@ -157,6 +169,6 @@ REST_FRAMEWORK = {
     },
 }
 
-CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:5500", "http://localhost:5500", "https://django.toni-kleinfeld.org/coderr/"]
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://127.0.0.1:5500", "http://localhost:5500"])
 
 CORS_ALLOW_CREDENTIALS = True
